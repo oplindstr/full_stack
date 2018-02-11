@@ -37,7 +37,7 @@ class App extends React.Component {
     if (this.state.persons.map(person => person.name).indexOf(this.state.newName) === -1) {
         const personObject = {
             name: this.state.newName,
-            phonenumber: this.state.newPhonenumber
+            number: this.state.newPhonenumber
           }
 
         personService
@@ -56,7 +56,7 @@ class App extends React.Component {
     }
     else {
       const person = this.state.persons.find(person => person.name === this.state.newName)
-      const changedPerson = { ...person, phonenumber: this.state.newPhonenumber }
+      const changedPerson = { ...person, number: this.state.newPhonenumber }
       personService
       .update(person.id, changedPerson)
       .then(response => {
