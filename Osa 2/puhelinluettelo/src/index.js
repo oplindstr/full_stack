@@ -88,6 +88,7 @@ class App extends React.Component {
         personService
         .destroy(id)
         .then(response => {
+          console.log(response)
           this.setState({
             persons: this.state.persons.filter(person => person.id !== id),
             message: `poistettiin henkilö ${name}`

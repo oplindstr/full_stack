@@ -18,6 +18,11 @@ blogsRouter.get('', async (request, response) => {
     const blogs = await Blog.find({}).populate('user')
     response.json(blogs.map(formatBlog))
   })
+
+  blogsRouter.get('/:id', async (request, response) => {
+    const blog = await Blog.findById(request.params.id)
+    response.json(formatBlog(blog))
+  })
   
   blogsRouter.post('', async (request, response) => {
     const blog = new Blog(request.body)
@@ -72,9 +77,13 @@ blogsRouter.get('', async (request, response) => {
 
       const loggedInUser = await User.findById(decodedToken.id)
 
+      if (!loggedInUser) {
+        return response.status(401).json({ error: 'you have to log in to delete' })
+      }
+
       const blog = await Blog.findById(request.params.id)
 
-      if (loggedInUser.id.toString() !== blog.user.toString()) {
+      if (blog.user && loggedInUser.id.toString() !== blog.user.toString()) {
         return response.status(401).json({ error: 'incorrect user' })
       }
 
@@ -98,7 +107,6 @@ blogsRouter.get('', async (request, response) => {
     }
     try {
       const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true } )
-      console.log(updatedBlog)
 
       response.json(formatBlog(updatedBlog))
     } catch (exception) {
