@@ -10,7 +10,8 @@ const formatBlog = (blog) => {
     author: blog.author,
     url: blog.url,
     likes: blog.likes,
-    user: blog.user
+    user: blog.user,
+    comments: blog.comments
   }
 }
 
@@ -107,6 +108,27 @@ blogsRouter.get('', async (request, response) => {
     }
     try {
       const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true } )
+
+      response.json(formatBlog(updatedBlog))
+    } catch (exception) {
+      console.log(exception)
+      response.status(400).send({ error: 'error' })
+    }
+  })
+
+  blogsRouter.post('/:id/comments', async (request, response) => {
+    const body = request.body
+
+    const comment = body.comment
+
+    const blog = await Blog.findById(request.params.id)
+
+    let updatedBlog = blog
+
+    blog.comments.push(comment)
+
+    try {
+      updatedBlog = await Blog.findByIdAndUpdate(request.params.id, updatedBlog, { new: true } )
 
       response.json(formatBlog(updatedBlog))
     } catch (exception) {
